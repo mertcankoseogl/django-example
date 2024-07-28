@@ -3,14 +3,14 @@ from django.db import models
 # Create your models here.
 
 class USER(models.Model):
-    Full_Name = models.CharField(max_length = 100)
-    User_Name = models.CharField(max_length = 50)
+    Full_Name = models.CharField(max_length = 100, null=True, blank=True)
+    User_Name = models.CharField(max_length = 50, unique=True)
     Password = models.CharField(max_length = 128)
-    Gender = models.CharField(max_length = 10)
-    Birthday = models.DateField()
+    Gender = models.CharField(max_length = 10, null=True, blank=True)
+    Birthday = models.DateField(null=True, blank=True)
     Register_Date = models.DateField(auto_now_add = True)
-    Biography = models.TextField(max_length = 250)
-    Email = models.EmailField(max_length = 200)
+    Biography = models.TextField(null=True, blank=True)
+    Email = models.EmailField(max_length = 200, unique=True)
     User_Photo = models.ImageField(null=True, blank=True, upload_to = "images/")
 
 
@@ -22,10 +22,10 @@ class CATEGORY(models.Model):
 class OUTFIT(models.Model):
     Category_Id = models.ForeignKey(CATEGORY, on_delete = models.CASCADE)
     User_Id = models.ForeignKey(USER, on_delete = models.CASCADE)
-    Title = models.TextField()
-    Description = models.TextField()
+    Title = models.CharField(null=True, blank=True)
+    Description = models.TextField(null=True, blank=True)
     Gender = models.CharField(max_length = 10)
-    Outfit_Photo = models.ImageField(null=True, blank=True, upload_to = "images/")
+    Outfit_Photo = models.ImageField(upload_to = "images/")
 
 
 class FAVORITE(models.Model):

@@ -17,6 +17,7 @@ class USER(models.Model):
 class CATEGORY(models.Model):
     Catg_Title = models.CharField(max_length = 50)
     Gender = models.CharField(max_length = 10)
+    Catg_Photo = models.ImageField(upload_to = "images/")
 
 
 class OUTFIT(models.Model):

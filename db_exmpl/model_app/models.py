@@ -36,7 +36,7 @@ class FAVORITE(models.Model):
 class Part(models.Model):
     Outfit_Id = models.ForeignKey(OUTFIT, on_delete = models.CASCADE)
     Part_Name = models.CharField(max_length = 50)
-    Link = models.CharField(max_length = 250)
+    Link = models.URLField()
     Subtitle = models.TextField(max_length = 250)
 
 

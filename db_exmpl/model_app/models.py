@@ -41,5 +41,8 @@ class Part(models.Model):
 
 
 class FOLLOWER(models.Model):
-    Who_Follows_Id = models.ForeignKey(USER, on_delete = models.CASCADE, related_name='following')
-    Who_Followed_Id = models.ForeignKey(USER, on_delete = models.CASCADE, related_name='followed')
+    Follows_Id = models.ForeignKey(
+        USER, on_delete = models.CASCADE, related_name='following')
+    
+    Followed_Id = models.ForeignKey(
+        USER, on_delete = models.CASCADE, related_name='followed')

@@ -23,7 +23,7 @@ class CATEGORY(models.Model):
 class OUTFIT(models.Model):
     Category_Id = models.ForeignKey(CATEGORY, on_delete = models.CASCADE)
     User_Id = models.ForeignKey(USER, on_delete = models.CASCADE)
-    Title = models.CharField(null=True, blank=True)
+    Title = models.CharField(max_length = 100, null=True, blank=True)
     Description = models.TextField(null=True, blank=True)
     Gender = models.CharField(max_length = 10)
     Outfit_Photo = models.ImageField(upload_to = "images/")

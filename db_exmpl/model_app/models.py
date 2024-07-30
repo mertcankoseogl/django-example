@@ -29,7 +29,7 @@ class Category(models.Model):
 class Outfit(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    title = models.CharField(max_length=100, null=True, blank=True)
+    title = models.CharField(max_length=100, unique=True, null=True)
     description = models.TextField(null=True, blank=True)
     gender = models.CharField(max_length=10)
     photo = models.ImageField(null=True, blank=True, upload_to="images/")
@@ -39,8 +39,12 @@ class Outfit(models.Model):
 
 
 class Favorite(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     outfit = models.ForeignKey(Outfit, on_delete=models.CASCADE)
 
+    class Meta:
+        unique_together = ('user', 'outfit')
+        
     def __str__(self):
         return f"{self.user.user_name} -> {self.outfit.title}"
 
@@ -58,6 +62,9 @@ class Part(models.Model):
 class Follower(models.Model):
     follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name='following')
     followed = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followed')
+
+    class Meta:
+        unique_together = ('follower', 'followed')
 
     def __str__(self):
         return f"{self.follower.user_name} follows {self.followed.user_name}"

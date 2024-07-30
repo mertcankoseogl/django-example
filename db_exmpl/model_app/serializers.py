@@ -15,7 +15,6 @@ class OutfitSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class FavoriteSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
     outfit = OutfitSerializer()
     class Meta:
         model = Favorite

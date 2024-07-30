@@ -39,7 +39,6 @@ class Outfit(models.Model):
 
 
 class Favorite(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
     outfit = models.ForeignKey(Outfit, on_delete=models.CASCADE)
 
     def __str__(self):

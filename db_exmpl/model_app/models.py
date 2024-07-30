@@ -2,48 +2,63 @@ from django.db import models
 
 # Create your models here.
 
-class USER(models.Model):
-    Full_Name = models.CharField(max_length = 100, null=True, blank=True)
-    User_Name = models.CharField(max_length = 50, unique=True, null=True)
-    Password = models.CharField(max_length = 128)
-    Gender = models.CharField(max_length = 10, null=True, blank=True)
-    Birthday = models.DateField(null=True, blank=True)
-    Register_Date = models.DateField(auto_now_add = True)
-    Biography = models.TextField(null=True, blank=True)
-    Email = models.EmailField(max_length = 200, unique=True, null=True)
-    User_Photo = models.ImageField(null=True, blank=True, upload_to = "images/")
+class User(models.Model):
+    full_name = models.CharField(max_length=100, null=True, blank=True)
+    user_name = models.CharField(max_length=50, unique=True, null=True)
+    password = models.CharField(max_length=128)
+    gender = models.CharField(max_length=10, null=True, blank=True)
+    birthday = models.DateField(null=True, blank=True)
+    register_date = models.DateField(auto_now_add=True)
+    biography = models.TextField(null=True, blank=True)
+    email = models.EmailField(max_length=200, unique=True, null=True)
+    user_photo = models.ImageField(null=True, blank=True, upload_to="images/")
+
+    def __str__(self):
+        return self.user_name
 
 
-class CATEGORY(models.Model):
-    Catg_Title = models.CharField(max_length = 50)
-    Gender = models.CharField(max_length = 10)
-    Catg_Photo = models.ImageField(null=True, blank=True, upload_to = "images/")
+class Category(models.Model):
+    title = models.CharField(max_length=50)
+    gender = models.CharField(max_length=10)
+    photo = models.ImageField(null=True, blank=True, upload_to="images/")
+
+    def __str__(self):
+        return self.title
 
 
-class OUTFIT(models.Model):
-    Category_Id = models.ForeignKey(CATEGORY, on_delete = models.CASCADE)
-    User_Id = models.ForeignKey(USER, on_delete = models.CASCADE)
-    Title = models.CharField(max_length = 100, null=True, blank=True)
-    Description = models.TextField(null=True, blank=True)
-    Gender = models.CharField(max_length = 10)
-    Outfit_Photo = models.ImageField(null=True, blank=True, upload_to = "images/")
+class Outfit(models.Model):
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=100, null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    gender = models.CharField(max_length=10)
+    photo = models.ImageField(null=True, blank=True, upload_to="images/")
+
+    def __str__(self):
+        return self.title
 
 
-class FAVORITE(models.Model):
-    User_ID = models.ForeignKey(USER, on_delete = models.CASCADE)
-    Outfit_ID = models.ForeignKey(OUTFIT, on_delete = models.CASCADE)
+class Favorite(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    outfit = models.ForeignKey(Outfit, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.user.user_name} -> {self.outfit.title}"
 
 
 class Part(models.Model):
-    Outfit_Id = models.ForeignKey(OUTFIT, on_delete = models.CASCADE)
-    Part_Name = models.CharField(max_length = 50)
-    Link = models.URLField()
-    Subtitle = models.TextField()
+    outfit = models.ForeignKey(Outfit, on_delete=models.CASCADE)
+    name = models.CharField(max_length=50)
+    link = models.URLField()
+    subtitle = models.TextField()
+
+    def __str__(self):
+        return self.name
 
 
-class FOLLOWER(models.Model):
-    Follows_Id = models.ForeignKey(
-        USER, on_delete = models.CASCADE, related_name='following')
-    
-    Followed_Id = models.ForeignKey(
-        USER, on_delete = models.CASCADE, related_name='followed')
+class Follower(models.Model):
+    follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name='following')
+    followed = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followed')
+
+    def __str__(self):
+        return f"{self.follower.user_name} follows {self.followed.user_name}"

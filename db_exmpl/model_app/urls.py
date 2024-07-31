@@ -10,4 +10,5 @@ urlpatterns = [
     path('outfits/<int:pk>/', views.OutfitUpdateDestroy.as_view(), name='outfit-detail'),
     path('favorites/', views.FavoriteListCreate.as_view(), name='favorite-list'),
     path('favorites/<int:pk>/', views.FavoriteUpdateDelete.as_view(), name='favorite-detail'),
+    path('register/', views.RegisterUser.as_view(), name='register'),
 ]

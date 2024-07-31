@@ -3,9 +3,9 @@ from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from rest_framework import generics
+from rest_framework import generics, status
 from .models import User, Outfit, Favorite, Category
-from .serializers import UserSerializer,OutfitSerializer, FavoriteSerializer, CategorySerializer
+from .serializers import UserSerializer,OutfitSerializer, FavoriteSerializer, CategorySerializer, UserRegistrationSerializer
 
 # Create your views here.
 
@@ -47,3 +47,9 @@ class FavoriteListCreate(generics.ListCreateAPIView):
 class FavoriteUpdateDelete(generics.RetrieveUpdateDestroyAPIView):
     queryset = Favorite.objects.all()
     serializer_class = FavoriteSerializer
+
+
+class RegisterUser(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserRegistrationSerializer
+    

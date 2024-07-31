@@ -68,3 +68,5 @@ class Follower(models.Model):
 
     def __str__(self):
         return f"{self.follower.user_name} follows {self.followed.user_name}"
+    
+

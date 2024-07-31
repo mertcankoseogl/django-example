@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import User, Favorite, Outfit, Category
+from django.contrib.auth.hashers import make_password
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
@@ -30,3 +31,10 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = "__all__"
+
+class UserRegistrationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('full_name', 'user_name', 'email', 'password')
+
+    

@@ -52,4 +52,16 @@ class FavoriteUpdateDelete(generics.RetrieveUpdateDestroyAPIView):
 class RegisterUser(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserRegistrationSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        
+        if serializer.is_valid():
+            self.perform_create(serializer)
+            return JsonResponse({"success": True, "detail": None}, status=status.HTTP_201_CREATED)
+        else:
+            # Format validation errors into a single string
+            errors = serializer.errors
+            detailed_errors = " ".join([f"{field}: {', '.join(error)}" for field, error in errors.items()])
+            return JsonResponse({"success": False, "detail": detailed_errors}, status=status.HTTP_400_BAD_REQUEST)
     

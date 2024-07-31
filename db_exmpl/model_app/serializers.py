@@ -20,6 +20,7 @@ class OutfitSerializer(serializers.ModelSerializer):
         model = Outfit
         fields = "__all__"
 
+
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
@@ -32,9 +33,19 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = "__all__"
 
+
 class UserRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('full_name', 'user_name', 'email', 'password')
 
+    def validate_email(self, value):
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("This email is already exist.")
+        return value
     
+    def validate_user_name(self, value):
+        if User.objects.filter(user_name=value).exists():
+            raise serializers.ValidationError("This user name is already exist.")
+        return value
+       

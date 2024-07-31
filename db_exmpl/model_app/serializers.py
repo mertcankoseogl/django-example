@@ -13,15 +13,15 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class OutfitSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
-    category = CategorySerializer()
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
     class Meta:
         model = Outfit
         fields = "__all__"
 
 class FavoriteSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
-    outfit = OutfitSerializer()
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    outfit = serializers.PrimaryKeyRelatedField(queryset=Outfit.objects.all())
     class Meta:
         model = Favorite
         fields = "__all__"

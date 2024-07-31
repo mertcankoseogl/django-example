@@ -3,64 +3,47 @@ from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework import generics
 from .models import User, Outfit, Favorite, Category
-from .serializers import UserSerializer, OutfitSerializer, FavoriteSerializer, CategorySerializer
+from .serializers import UserSerializer,OutfitSerializer, FavoriteSerializer, CategorySerializer
 
 # Create your views here.
 
-#User requests
-@api_view(['GET', 'POST'])
-def userListCreate(request):
-    if request.method == 'GET':
-        users = User.objects.all()
-        serializer = UserSerializer(users, many=True)
-        return Response(serializer.data)
-    
-    if request.method == 'POST':
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-        return Response(serializer.data)
+# User views
+class UserListCreate(generics.ListCreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
-@api_view(['GET'])
-def userDetail(request, pk):
-    users = get_object_or_404(User, pk=pk)
-    serializer = UserSerializer(users, many=False)
-    return Response(serializer.data)   
+class UserUpdateDelete(generics.RetrieveUpdateDestroyAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
 
-#category request
-@api_view(['GET', 'POST'])
-def categoryListCreate(request):
-    if request.method =='GET':
-        categories = Category.objects.all()
-        serializer = CategorySerializer(categories, many=True)
-        return Response(serializer.data)
-    
-    if request.method == 'POST':
-        serializer = CategorySerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-        return Response(serializer.data)
-    
-#Outfit request
-@api_view(['GET', 'POST'])
-def outfitListCreate(request):
-    if request.method =='GET':
-        outfits = Outfit.objects.all()
-        serializer = OutfitSerializer(outfits, many=True)
-        return Response(serializer.data)
-    
-    if request.method == 'POST':
-        serializer = OutfitSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-        return Response(serializer.data)
+# Category views
+class CategoryListCreate(generics.ListCreateAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+class CategoryUpdateDelete(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
 
 
-#Favorite request
-@api_view(['GET'])
-def favoriteList(request):
-    favorites = Favorite.objects.all()
-    serializer = FavoriteSerializer(favorites, many=True)
-    return Response(serializer.data)
+# Outfit views
+class OutfitListCreate(generics.ListCreateAPIView):
+    queryset = Outfit.objects.all()
+    serializer_class = OutfitSerializer
+
+class OutfitUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Outfit.objects.all()
+    serializer_class = OutfitSerializer
+
+
+# Favorite views
+class FavoriteListCreate(generics.ListCreateAPIView):
+    queryset = Favorite.objects.all()
+    serializer_class = FavoriteSerializer
+
+class FavoriteUpdateDelete(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Favorite.objects.all()
+    serializer_class = FavoriteSerializer

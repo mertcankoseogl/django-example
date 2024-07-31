@@ -27,7 +27,7 @@ class Category(models.Model):
 
 
 class Outfit(models.Model):
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='user_o')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=100, unique=True, null=True)
     description = models.TextField(null=True, blank=True)
@@ -39,8 +39,8 @@ class Outfit(models.Model):
 
 
 class Favorite(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    outfit = models.ForeignKey(Outfit, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_fav')
+    outfit = models.ForeignKey(Outfit, on_delete=models.CASCADE, related_name='outfit_fav')
 
     class Meta:
         unique_together = ('user', 'outfit')
@@ -50,7 +50,7 @@ class Favorite(models.Model):
 
 
 class Part(models.Model):
-    outfit = models.ForeignKey(Outfit, on_delete=models.CASCADE)
+    outfit = models.ForeignKey(Outfit, on_delete=models.CASCADE, related_name='outfit_part')
     name = models.CharField(max_length=50)
     link = models.URLField()
     subtitle = models.TextField()

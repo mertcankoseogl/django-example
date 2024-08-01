@@ -59,6 +59,23 @@ class RegisterUser(generics.CreateAPIView):
             return JsonResponse({"success": True, "detail": None}, status=status.HTTP_201_CREATED)
         else:
             errors = serializer.errors
-            detailed_errors = " ".join([f"{field}: {', '.join(error)}" for field, error in errors.items()])
+
+            # Define priority order of fields
+            priority_fields = ['email', 'username', 'password']
+
+            # Find the first field with an error based on priority
+            detailed_errors = None
+            for field in priority_fields:
+                if field in errors:
+                    detailed_errors = f"{field}: {', '.join(errors[field])}"
+                    break
+
+            # If no priority field errors are found, show other errors
+            if detailed_errors is None:
+                for field, error in errors.items():
+                    if field not in priority_fields:
+                        detailed_errors = f"{field}: {', '.join(error)}"
+                        break
+
             return JsonResponse({"success": False, "detail": detailed_errors}, status=status.HTTP_400_BAD_REQUEST)
     

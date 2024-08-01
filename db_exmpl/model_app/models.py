@@ -4,13 +4,13 @@ from django.db import models
 
 class User(models.Model):
     full_name = models.CharField(max_length=100, null=True, blank=True)
-    user_name = models.CharField(max_length=50, unique=True, null=True)
+    user_name = models.CharField(max_length=50, unique=True, null=False, blank=False)
     password = models.CharField(max_length=128)
     gender = models.CharField(max_length=10, null=True, blank=True)
     birthday = models.DateField(null=True, blank=True)
     register_date = models.DateField(auto_now_add=True)
     biography = models.TextField(null=True, blank=True)
-    email = models.EmailField(max_length=200, unique=True, null=True)
+    email = models.EmailField(max_length=200, unique=True, null=False, blank=False)
     user_photo = models.ImageField(null=True, blank=True, upload_to="images/")
 
     def __str__(self):

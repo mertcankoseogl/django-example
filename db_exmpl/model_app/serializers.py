@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from .models import User, Favorite, Outfit, Category
-from django.contrib.auth.hashers import make_password
 
 
 class FavoriteSerializer(serializers.ModelSerializer):

@@ -1,8 +1,5 @@
-from django.shortcuts import render, get_object_or_404
 
 from django.http import JsonResponse
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
 from rest_framework import generics, status
 from .models import User, Outfit, Favorite, Category
 from .serializers import UserSerializer,OutfitSerializer, FavoriteSerializer, CategorySerializer, UserRegistrationSerializer
@@ -49,6 +46,7 @@ class FavoriteUpdateDelete(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = FavoriteSerializer
 
 
+# Register view
 class RegisterUser(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserRegistrationSerializer
@@ -60,7 +58,6 @@ class RegisterUser(generics.CreateAPIView):
             self.perform_create(serializer)
             return JsonResponse({"success": True, "detail": None}, status=status.HTTP_201_CREATED)
         else:
-            # Format validation errors into a single string
             errors = serializer.errors
             detailed_errors = " ".join([f"{field}: {', '.join(error)}" for field, error in errors.items()])
             return JsonResponse({"success": False, "detail": detailed_errors}, status=status.HTTP_400_BAD_REQUEST)

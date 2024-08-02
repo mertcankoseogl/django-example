@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from .models import User, Favorite, Outfit, Category
 
-
 class FavoriteSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     outfit = serializers.PrimaryKeyRelatedField(queryset=Outfit.objects.all())
@@ -34,9 +33,13 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True) 
+
     class Meta:
         model = User
-        fields = ('fullname', 'username', 'email', 'password')
+        fields = ['fullname', 'username', 'email', 'password']
+        extra_kwargs = {'password': {'write_only': True}}  
+
 
 
        

@@ -2,9 +2,8 @@
 from django.http import JsonResponse
 from rest_framework import generics, status
 from .models import User, Outfit, Favorite, Category
-from .serializers import UserSerializer,OutfitSerializer, FavoriteSerializer, CategorySerializer, UserRegistrationSerializer
-from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework.authtoken.serializers import AuthTokenSerializer
+from .serializers import UserSerializer,OutfitSerializer, FavoriteSerializer, CategorySerializer, UserRegistrationSerializer, LoginSerializer
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
@@ -82,14 +81,15 @@ class RegisterUser(generics.CreateAPIView):
             return JsonResponse({"success": False, "detail": detailed_errors}, status=status.HTTP_400_BAD_REQUEST)
         
 
-class LoginUser(ObtainAuthToken):
-    def post(self, request, *args, **kwargs):
-        serializer = AuthTokenSerializer(data=request.data)
-        if serializer.is_valid():
-            user = authenticate(username=serializer.validated_data['username'], password=serializer.validated_data['password'])
-            if user:
-                token, created = Token.objects.get_or_create(user=user)
-                return Response({'token': token.key})
-            else:
-                return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
+class Login(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = LoginSerializer
+    authentication_classes = [TokenAuthentication]
+
+    def post(self, request):
+        user = authenticate(username=request.data['username'], password=request.data['password'])
+        if user:
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({'token': token.key})
+        else:
+            return Response({'error': 'Invalid credentials'}, status=401)   

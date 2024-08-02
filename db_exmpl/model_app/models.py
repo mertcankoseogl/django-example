@@ -12,7 +12,7 @@ class User(models.Model):
     user_photo = models.ImageField(null=True, blank=True, upload_to="images/")
 
     def __str__(self):
-        return self.user_name
+        return self.username
 
 
 class Category(models.Model):

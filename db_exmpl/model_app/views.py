@@ -3,10 +3,13 @@ from django.http import JsonResponse
 from rest_framework import generics, status
 from .models import User, Outfit, Favorite, Category
 from .serializers import UserSerializer,OutfitSerializer, FavoriteSerializer, CategorySerializer, UserRegistrationSerializer, LoginSerializer
-from rest_framework.authentication import TokenAuthentication
+from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
+from rest_framework import authentication, permissions
+from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny
 
 # Create your views here.
 
@@ -81,14 +84,19 @@ class RegisterUser(generics.CreateAPIView):
             return JsonResponse({"success": False, "detail": detailed_errors}, status=status.HTTP_400_BAD_REQUEST)
         
 
-class Login(generics.CreateAPIView):
-    queryset = User.objects.all()
-    serializer_class = LoginSerializer
-   
-    def post(self, request):
-        user = authenticate(username=request.data['username'], password=request.data['password'])
-        if user:
-            token, created = Token.objects.get_or_create(user=user)
-            return Response({'token': token.key})
-        else:
-            return Response({"success": False,  'detail': 'Invalid credentials'}, status=401)   
+class Login(APIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        serializer = LoginSerializer(data=request.data)
+        if serializer.is_valid():
+            username = serializer.validated_data['username']
+            password = serializer.validated_data['password']
+            user = authenticate(username=username, password=password)
+            if user:
+                token, created = Token.objects.get_or_create(user=user)
+                return Response({'token': token.key})
+            else:
+                return Response({"success": False, 'detail': 'Invalid credentials'}, status=401)
+        return Response(serializer.errors, status=400)      

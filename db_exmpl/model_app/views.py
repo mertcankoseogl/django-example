@@ -84,12 +84,11 @@ class RegisterUser(generics.CreateAPIView):
 class Login(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = LoginSerializer
-    authentication_classes = [TokenAuthentication]
-
+   
     def post(self, request):
         user = authenticate(username=request.data['username'], password=request.data['password'])
         if user:
             token, created = Token.objects.get_or_create(user=user)
             return Response({'token': token.key})
         else:
-            return Response({'error': 'Invalid credentials'}, status=401)   
+            return Response({"success": False,  'detail': 'Invalid credentials'}, status=401)   

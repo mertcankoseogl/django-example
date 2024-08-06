@@ -1,6 +1,7 @@
 from django.db import models   
+from django.contrib.auth.models import AbstractUser
 
-class User(models.Model):
+class User(AbstractUser):
     fullname = models.CharField(max_length=100, null=True, blank=True)
     username = models.CharField(max_length=50, unique=True, null=False, blank=False)
     password = models.CharField(max_length=128)
@@ -10,6 +11,9 @@ class User(models.Model):
     biography = models.TextField(null=True, blank=True)
     email = models.EmailField(max_length=200, unique=True, null=False, blank=False)
     user_photo = models.ImageField(null=True, blank=True, upload_to="images/")
+
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = []
 
     def __str__(self):
         return self.username
@@ -65,6 +69,5 @@ class Follower(models.Model):
         unique_together = ('follower', 'followed')
 
     def __str__(self):
-        return f"{self.follower.user_name} follows {self.followed.user_name}"
+        return f"{self.follower.username} follows {self.followed.username}"
     
-

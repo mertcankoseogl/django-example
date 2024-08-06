@@ -6,10 +6,11 @@ from .serializers import UserSerializer,OutfitSerializer, FavoriteSerializer, Ca
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
+from rest_framework.exceptions import AuthenticationFailed
 from django.contrib.auth import authenticate
 from rest_framework import authentication, permissions
 from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 # Create your views here.
 
@@ -55,15 +56,16 @@ class FavoriteUpdateDelete(generics.RetrieveUpdateDestroyAPIView):
 
 # Register view
 class RegisterUser(generics.CreateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserRegistrationSerializer
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        
+        serializer = UserRegistrationSerializer(data=request.data)
+    
         if serializer.is_valid():
-            self.perform_create(serializer)
-            return JsonResponse({"success": True, "detail": None}, status=status.HTTP_201_CREATED)
+            serializer.save()
+            user = User.objects.get(username=request.data['username'])
+            user.set_password(request.data['password'])
+            token = Token.objects.create(user=user)
+            return JsonResponse({"success": True, "detail": None, "token": token.key}, status=status.HTTP_201_CREATED)
         else:
             errors = serializer.errors
 
@@ -85,18 +87,21 @@ class RegisterUser(generics.CreateAPIView):
         
 
 class Login(APIView):
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [AllowAny]
-
     def post(self, request, *args, **kwargs):
         serializer = LoginSerializer(data=request.data)
         if serializer.is_valid():
             username = serializer.validated_data['username']
             password = serializer.validated_data['password']
-            user = authenticate(username=username, password=password)
-            if user:
+
+            user = User.objects.filter(username=username).first()
+            if user is None:
+                return Response({"success": False, 'detail': 'User not found'}, status=401)
+            
+            if not user.check_password(password):
+                return Response({"success": False, 'detail': 'Password is wrong'}, status=401)
+                
+            else:
                 token, created = Token.objects.get_or_create(user=user)
                 return Response({'token': token.key})
-            else:
-                return Response({"success": False, 'detail': 'Invalid credentials'}, status=401)
-        return Response(serializer.errors, status=400)      
+        return Response(serializer.errors, status=400)     
+        

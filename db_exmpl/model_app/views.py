@@ -2,7 +2,7 @@
 from django.http import JsonResponse
 from rest_framework import generics, status
 from .models import User, Outfit, Favorite, Category
-from .serializers import UserSerializer,OutfitSerializer, FavoriteSerializer, CategorySerializer
+from .serializers import UserSerializer,OutfitSerializer, FavoriteSerializer, CategorySerializer, UserRegistrationSerializer, LoginSerializer
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
@@ -61,7 +61,7 @@ class FavoriteUpdateDelete(generics.RetrieveUpdateDestroyAPIView):
     queryset = Favorite.objects.all()
     serializer_class = FavoriteSerializer
 
-'''
+
 # Register view
 class RegisterUser(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
@@ -115,4 +115,3 @@ class Login(APIView):
                 return Response({'token': token.key})
         return Response(serializer.errors, status=400)     
 
-'''

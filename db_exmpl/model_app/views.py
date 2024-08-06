@@ -2,7 +2,7 @@
 from django.http import JsonResponse
 from rest_framework import generics, status
 from .models import User, Outfit, Favorite, Category
-from .serializers import UserSerializer,OutfitSerializer, FavoriteSerializer, CategorySerializer, UserRegistrationSerializer, LoginSerializer
+from .serializers import UserSerializer,OutfitSerializer, FavoriteSerializer, CategorySerializer
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
@@ -16,46 +16,55 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 
 # User views
 class UserListCreate(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
 class UserUpdateDelete(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
 
 # Category views
 class CategoryListCreate(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
 class CategoryUpdateDelete(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
 
 # Outfit views
 class OutfitListCreate(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Outfit.objects.all()
     serializer_class = OutfitSerializer
 
 class OutfitUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Outfit.objects.all()
     serializer_class = OutfitSerializer
 
 
 # Favorite views
 class FavoriteListCreate(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Favorite.objects.all()
     serializer_class = FavoriteSerializer
 
 class FavoriteUpdateDelete(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Favorite.objects.all()
     serializer_class = FavoriteSerializer
 
-
+'''
 # Register view
 class RegisterUser(generics.CreateAPIView):
+    permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
         serializer = UserRegistrationSerializer(data=request.data)
@@ -87,6 +96,7 @@ class RegisterUser(generics.CreateAPIView):
         
 
 class Login(APIView):
+    permission_classes = [IsAuthenticated]
     def post(self, request, *args, **kwargs):
         serializer = LoginSerializer(data=request.data)
         if serializer.is_valid():
@@ -104,4 +114,5 @@ class Login(APIView):
                 token, created = Token.objects.get_or_create(user=user)
                 return Response({'token': token.key})
         return Response(serializer.errors, status=400)     
-        
+
+'''

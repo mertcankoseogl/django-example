@@ -1,8 +1,8 @@
 from rest_framework import serializers
-from .models import User, Favorite, Outfit, Category
+from .models import CustomUser, Favorite, Outfit, Category
 
 class FavoriteSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    user = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
     outfit = serializers.PrimaryKeyRelatedField(queryset=Outfit.objects.all())
 
     class Meta:
@@ -11,7 +11,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
 
 class OutfitSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    user = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
     category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
 
     class Meta:
@@ -28,19 +28,19 @@ class CategorySerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     user_fav = FavoriteSerializer(many=True, read_only=True)
     class Meta:
-        model = User
+        model = CustomUser
         fields = "__all__"
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer): 
     class Meta:
-        model = User
+        model = CustomUser
         fields = ['fullname', 'username', 'email', 'password']
 
 
 class LoginSerializer(serializers.Serializer):
     class Meta:
-        model = User
+        model = CustomUser
         fields = ['username', 'password']
 
 

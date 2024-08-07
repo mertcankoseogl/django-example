@@ -1,7 +1,7 @@
 
 from django.http import JsonResponse
 from rest_framework import generics, status
-from .models import User, Outfit, Favorite, Category
+from .models import CustomUser, Outfit, Favorite, Category
 from .serializers import UserSerializer,OutfitSerializer, FavoriteSerializer, CategorySerializer, UserRegistrationSerializer, LoginSerializer
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.authtoken.models import Token
@@ -17,12 +17,12 @@ from rest_framework.authtoken.views import ObtainAuthToken
 # User views
 class UserListCreate(generics.ListCreateAPIView):
     permission_classes = [AllowAny]
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
 
 class UserUpdateDelete(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [AllowAny]
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
 
 
@@ -65,7 +65,7 @@ class FavoriteUpdateDelete(generics.RetrieveUpdateDestroyAPIView):
 # Register view
 class RegisterUser(generics.CreateAPIView):
     permission_classes = [AllowAny]
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
     serializer_class = UserRegistrationSerializer
     
     def create(self, request, *args, **kwargs):
@@ -73,7 +73,7 @@ class RegisterUser(generics.CreateAPIView):
     
         if serializer.is_valid():
             serializer.save()
-            user = User.objects.get(username=request.data['username'])
+            user = CustomUser.objects.get(username=request.data['username'])
             user.set_password(request.data['password'])
             token = Token.objects.create(user=user)
             return JsonResponse({"success": True, "detail": None, "token": token.key}, status=status.HTTP_201_CREATED)
@@ -105,7 +105,7 @@ class Login(APIView):
             username = serializer.validated_data['username']
             password = serializer.validated_data['password']
 
-            user = User.objects.filter(username=username).first()
+            user = CustomUser.objects.filter(username=username).first()
             if user is None:
                 return Response({"success": False, 'detail': 'User not found'}, status=401)
             

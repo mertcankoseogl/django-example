@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
 ]
 
-AUTH_USER_MODEL = 'model_app.User'
+AUTH_USER_MODEL = 'model_app.CustomUser'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -67,7 +67,7 @@ REST_FRAMEWORK = {
 }
 
 AUTHENTICATION_BACKENDS = (
-    "django.contrib.auth.backends.ModelBackend",
+     'model_app.authentication.CustomAuthBackend',
 )
 
 ROOT_URLCONF = 'models.urls'

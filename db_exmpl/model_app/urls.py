@@ -12,4 +12,5 @@ urlpatterns = [
     path('favorites/<int:pk>/', views.FavoriteUpdateDelete.as_view(), name='favorite-detail'),
     path('register/', views.RegisterUser.as_view(), name='register'),
     path('login/', views.Login.as_view(), name='login'),
+    path('api-token-auth/', views.CustomAuthToken.as_view())
 ]

@@ -1,8 +1,9 @@
 
 from django.http import JsonResponse
 from rest_framework import generics, status
-from .models import User, Outfit, Favorite, Category
-from .serializers import UserSerializer,OutfitSerializer, FavoriteSerializer, CategorySerializer, UserRegistrationSerializer, LoginSerializer
+from .models import User, Outfit, Favorite, Category, Part
+from .serializers import UserSerializer, FavoriteSerializer, CategorySerializer, UserRegistrationSerializer
+from .serializers import  LoginSerializer, PartSerializer, CreateOutfitSerializer, GetOutfitSerializer
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
@@ -12,6 +13,7 @@ from rest_framework import authentication, permissions
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.parsers import JSONParser, FormParser, MultiPartParser
 # Create your views here.
 
 # User views
@@ -39,15 +41,33 @@ class CategoryUpdateDelete(generics.RetrieveUpdateDestroyAPIView):
 
 
 # Outfit views
-class OutfitListCreate(generics.ListCreateAPIView):
+class OutfitList(generics.ListAPIView):
     permission_classes = [AllowAny]
     queryset = Outfit.objects.all()
-    serializer_class = OutfitSerializer
+    serializer_class = GetOutfitSerializer
+    parser_classes = (JSONParser)
+
+class OutfitCreate(generics.CreateAPIView):
+    permission_classes = [AllowAny]
+    queryset = Outfit.objects.all()
+    serializer_class = CreateOutfitSerializer
+    parser_classes = (JSONParser, FormParser, MultiPartParser)
 
 class OutfitUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [AllowAny]
     queryset = Outfit.objects.all()
-    serializer_class = OutfitSerializer
+    serializer_class = CreateOutfitSerializer
+
+# Part views
+class PartListCreate(generics.ListCreateAPIView):
+    permission_classes = [AllowAny]
+    queryset = Part.objects.all()
+    serializer_class = PartSerializer
+
+class PartUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [AllowAny]
+    queryset = Part.objects.all()
+    serializer_class = PartSerializer
 
 
 # Favorite views
@@ -99,24 +119,45 @@ class RegisterUser(generics.CreateAPIView):
 
 class Login(APIView):
     permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication]
+
     def post(self, request, *args, **kwargs):
         serializer = LoginSerializer(data=request.data)
         if serializer.is_valid():
-            username = serializer.validated_data['username']
-            password = serializer.validated_data['password']
-
-            user = User.objects.filter(username=username).first()
-            if user is None:
-                return Response({"success": False, 'detail': 'User not found'}, status=401)
+            username = serializer.validated_data.get('username')
+            password = serializer.validated_data.get('password')
             
-            if not user.check_password(password):
-                return Response({"success": False, 'detail': 'Password is wrong'}, status=401)
-                
-            else:
-                token, created = Token.objects.get_or_create(user=user)
-                return Response({'token': token.key})
-        return Response(serializer.errors, status=400)  
-
+            print(f'Attempting to authenticate user: {username}')  # Debugging statement
+            
+            user = authenticate(username=username, password=password)
+            
+            if user is None:
+                return Response({"success": False, 'detail': 'Invalid credentials'}, status=401)
+            
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({'token': token.key})
+        
+        return Response(serializer.errors, status=400)
+    
+    def post(self, request, *args, **kwargs):
+        serializer = LoginSerializer(data=request.data)
+        if serializer.is_valid():
+            username = serializer.validated_data.get('username')
+            password = serializer.validated_data.get('password')
+            
+            if not username or not password:
+                return Response({"success": False, 'detail': 'Username and password are required'}, status=400)
+            
+            user = authenticate(username=username, password=password)
+            
+            if user is None:
+                return Response({"success": False, 'detail': 'Invalid credentials'}, status=401)
+            
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({'token': token.key})
+        
+        return Response(serializer.errors, status=400)
+    
 
 class CustomAuthToken(ObtainAuthToken):
 
